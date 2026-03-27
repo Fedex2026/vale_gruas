@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>Untitled</title>
+    <link rel="stylesheet" href="./style.css">
+
+  </head>
+    
+  <body>
+  <div class="header">
+  <div class="header-content">
+    <img
+      src="https://res.cloudinary.com/dpsevb0cd/image/upload/v1774599748/logo-metro_nvkugi.jpg"
+      alt="Logo Metro"
+      class="logo"
+    />
+    <div class="titulo">
+      <h1>Vales por Siniestro y por Asistencia</h1>
+      <p>Captura de vales con fotos de unidad y vale</p>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="login-box">
+    <h2>Acceso de Choferes</h2>
+
+    <div class="grid">
+      <div>
+        <label for="nombreChofer">Nombre del chofer</label>
+        <input type="text" id="nombreChofer" placeholder="Nombre completo" />
+      </div>
+
+      <div>
+        <label for="emailLogin">Correo</label>
+        <input type="email" id="emailLogin" placeholder="correo@ejemplo.com" />
+      </div>
+
+      <div>
+        <label for="passwordLogin">Contraseña</label>
+        <input type="password" id="passwordLogin" placeholder="Contraseña" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnRegister">Registrar chofer</button>
+      <button type="button" id="btnLogin">Ingresar</button>
+      <button type="button" id="btnLogout">Cerrar sesión</button>
+    </div>
+
+    <div id="usuarioActivo" class="usuario-activo">Sin sesión iniciada</div>
+  </div>
+
+  <div class="botones">
+    <button type="button" id="btnSiniestros">Siniestros</button>
+    <button type="button" id="btnAsistencias">Asistencias</button>
+  </div>
+
+  <div id="tipoSeleccionadoBox" class="tipo-box hidden">
+    Tipo seleccionado: <span id="tipoTexto"></span>
+  </div>
+
+  <div id="formulario" class="hidden">
+    <h2>Seleccionar Seguro</h2>
+
+    <select id="seguro">
+      <option value="">Seleccionar Seguro</option>
+      <option>AFIRME</option>
+      <option>AIG</option>
+      <option>ANA</option>
+      <option>ATLAS</option>
+      <option>AXA</option>
+      <option>BANORTE</option>
+      <option>BBVA</option>
+      <option>BX+</option>
+      <option>CHUBB</option>
+      <option>EL POTOSÍ</option>
+      <option>GENERAL DE SEGUROS</option>
+      <option>GNP</option>
+      <option>HDI</option>
+      <option>IKE</option>
+      <option>INBURSA</option>
+      <option>LA LATINO</option>
+      <option>MAPFRE</option>
+      <option>PRIMERO SEGUROS</option>
+      <option>QUÁLITAS</option>
+      <option>SURA</option>
+      <option>ZURICH</option>
+      <option>OTROS</option>
+    </select>
+
+    <div class="grid">
+      <div>
+        <label for="fecha">Fecha</label>
+        <input type="date" id="fecha" />
+      </div>
+
+      <div>
+        <label for="siniestro">Siniestro</label>
+        <input type="text" id="siniestro" placeholder="Número de siniestro" />
+      </div>
+
+      <div>
+        <label for="folio">Folio</label>
+        <input type="text" id="folio" placeholder="Folio" />
+      </div>
+
+      <div>
+        <label for="marca">Marca</label>
+        <input type="text" id="marca" placeholder="Marca" />
+      </div>
+
+      <div>
+        <label for="submarca">Sub marca</label>
+        <input type="text" id="submarca" placeholder="Sub marca" />
+      </div>
+
+      <div>
+        <label for="anio">Año</label>
+        <input type="text" id="anio" placeholder="Año" />
+      </div>
+
+      <div>
+        <label for="placas">Placas</label>
+        <input type="text" id="placas" placeholder="Placas" />
+      </div>
+
+      <div>
+        <label for="color">Color</label>
+        <input type="text" id="color" placeholder="Color" />
+      </div>
+
+      <div>
+        <label for="fotoUnidad">Foto Unidad</label>
+        <input type="file" id="fotoUnidad" accept="image/*" />
+      </div>
+
+      <div>
+        <label for="fotoVale">Foto Vale</label>
+        <input type="file" id="fotoVale" accept="image/*" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnGuardar">Guardar</button>
+      <button type="button" id="btnExcel">Recargar registros</button>
+    </div>
+  </div>
+
+  <div class="busqueda-box">
+    <h2>Buscar Registros</h2>
+
+    <div class="grid">
+      <div>
+        <label for="buscarFecha">Fecha</label>
+        <input type="date" id="buscarFecha" />
+      </div>
+
+      <div>
+        <label for="buscarPlacas">Placas</label>
+        <input type="text" id="buscarPlacas" placeholder="Buscar por placas" />
+      </div>
+
+      <div>
+        <label for="buscarMarca">Marca</label>
+        <input type="text" id="buscarMarca" placeholder="Buscar por marca" />
+      </div>
+
+      <div>
+        <label for="buscarSubmarca">Sub marca</label>
+        <input type="text" id="buscarSubmarca" placeholder="Buscar por sub marca" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnBuscar">Buscar</button>
+      <button type="button" id="btnLimpiarBusqueda">Limpiar búsqueda</button>
+    </div>
+  </div>
+
+  <h2>Registros Guardados</h2>
+
+  <div class="tabla-wrap">
+    <table id="tabla">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Seguro</th>
+          <th>Tipo</th>
+          <th>Siniestro</th>
+          <th>Folio</th>
+          <th>Marca</th>
+          <th>Submarca</th>
+          <th>Año</th>
+          <th>Placas</th>
+          <th>Color</th>
+          <th>Chofer</th>
+          <th>Correo</th>
+          <th>Foto Unidad</th>
+          <th>Foto Vale</th>
+        </tr>
+      </thead>
+      <tbody id="tablaBody"></tbody>
+    </table>
+  </div>
+</div>
+    <script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js'></script>
+<script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js'></script>
+<script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js'></script><script  src="./script.js"></script>
+
+  </body>
+  
+</html>
