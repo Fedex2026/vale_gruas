@@ -517,8 +517,10 @@
   <!-- ================= TABLA PRINCIPAL ================= -->
   <h2>Registros Guardados</h2>
 
-  <div class="tabla-wrap">
-    <table>
+<details class="seccion-colapsable" open>
+
+<div class="tabla-wrap">
+<table>
       <thead>
         <tr>
           <th>Fecha</th>
@@ -539,14 +541,17 @@
       </thead>
       <tbody id="tablaBody"></tbody>
     </table>
-  </div>
+</div>
+
+</details>
 
   <!-- ================= TABLA ENTREGAS ================= -->
   <h2>Entregas</h2>
 
-  <div class="tabla-wrap">
-    <table>
-      <thead>
+<details class="seccion-colapsable">
+
+<div class="tabla-wrap">
+<table>
         <tr>
           <th>Fecha</th>
           <th>Seguro</th>
@@ -567,13 +572,17 @@
       </thead>
       <tbody id="tablaEntregasBody"></tbody>
     </table>
-  </div>
+</div>
+
+</details>
 
   <!-- ================= TABLA CORRALON ================= -->
   <h2>Corralón</h2>
 
-  <div class="tabla-wrap">
-    <table>
+<details class="seccion-colapsable">
+
+<div class="tabla-wrap">
+<table>
       <thead>
         <tr>
           <th>Fecha</th>
@@ -597,13 +606,16 @@
       </thead>
       <tbody id="tablaCorralonBody"></tbody>
     </table>
-  </div>
+</div>
 
+</details>
   <!-- ================= TABLA SIN SEGURO ================= -->
   <h2>Sin Seguro</h2>
 
-  <div class="tabla-wrap">
-    <table>
+<details class="seccion-colapsable">
+
+<div class="tabla-wrap">
+<table>
       <thead>
         <tr>
           <th>Fecha</th>
@@ -623,13 +635,17 @@
       </thead>
       <tbody id="tablaSinSeguroBody"></tbody>
     </table>
-  </div>
+</div>
+
+</details>
 
   <!-- ================= TABLA FACTURACION ================= -->
   <h2>Zona de Facturación</h2>
 
-  <div class="tabla-wrap">
-    <table>
+<details class="seccion-colapsable">
+
+<div class="tabla-wrap">
+<table>
       <thead>
         <tr>
           <th>Fecha</th>
@@ -653,9 +669,9 @@
       </thead>
       <tbody id="tablaFacturasBody"></tbody>
     </table>
-  </div>
-
 </div>
+
+</details>
 
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
