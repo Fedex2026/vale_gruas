@@ -711,6 +711,11 @@
 
   <!-- ================= TABLA FACTURACION ================= -->
   <h2>Zona de Facturación</h2>
+  <div style="margin:10px 0;">
+<button id="btnExcel" class="btn-azul">
+Exportar a Excel
+</button>
+</div>
 
 <details class="seccion-colapsable">
 
@@ -734,7 +739,7 @@
           <th>Total</th>
           <th>Chofer</th>
           <th>Correo Chofer</th>
-          <th>Constancia</th>
+          
         </tr>
       </thead>
       <tbody id="tablaFacturasBody"></tbody>
@@ -746,6 +751,45 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+
+const btnExcel = document.getElementById("btnExcel");
+
+if(btnExcel){
+btnExcel.addEventListener("click", function() {
+
+let tabla = document.querySelector("#tablaFacturasBody");
+let filas = tabla.querySelectorAll("tr");
+
+let csv = "Fecha,Razón Social,RFC,Domicilio,CP,Régimen,Correo,Marca,Submarca,Año,Placas,Monto,IVA,Total,Chofer,Correo Chofer\n";
+
+filas.forEach(fila => {
+let celdas = fila.querySelectorAll("td");
+let filaData = [];
+
+celdas.forEach(celda => {
+filaData.push(celda.innerText);
+});
+
+csv += filaData.join(",") + "\n";
+});
+
+let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+let url = URL.createObjectURL(blob);
+
+let link = document.createElement("a");
+link.href = url;
+link.download = "facturacion.csv";
+link.click();
+
+});
+}
+
+});
+
+</script>  
 <script src="script.js"></script>
 
 </body>
