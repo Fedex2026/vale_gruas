@@ -978,6 +978,7 @@ function renderTablaFacturas() {
       <td>${escapeHtml(r.totalConIVA)}</td>
       <td>${escapeHtml(r.choferNombre)}</td>
       <td>${escapeHtml(r.choferCorreo)}</td>
+      <td><button class="btnExcelFactura" onclick="exportarFactura(this)">Excel</button></td>
     `;
     tablaFacturasBody.appendChild(tr);
   });
@@ -1198,5 +1199,28 @@ link.href = url;
 link.download = "Factura_Individual.csv";
 link.click();
 }
+function exportarFactura(btn){
 
+let fila = btn.closest("tr");
+let celdas = fila.querySelectorAll("td");
+
+let datos = [];
+
+celdas.forEach((celda,index)=>{
+if(index < celdas.length -1){
+datos.push(celda.innerText);
+}
+});
+
+let csv = datos.join(",");
+
+let blob = new Blob([csv], { type: "text/csv" });
+let url = URL.createObjectURL(blob);
+
+let link = document.createElement("a");
+link.href = url;
+link.download = "Factura.csv";
+link.click();
+
+}
 
