@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  <head>
-    <meta charset="UTF-8">
-    <title>Untitled</title>
-    <link rel="stylesheet" href="./style.css">
-
-  </head>
-    
-  <body>
-  <div class="header">
+<div class="header">
   <div class="header-content">
     <img
       src="https://res.cloudinary.com/dpsevb0cd/image/upload/v1774599748/logo-metro_nvkugi.jpg"
@@ -24,166 +13,502 @@
 </div>
 
 <div class="container">
+
+  <!-- ================= LOGIN ================= -->
   <div class="login-box">
     <h2>Acceso de Choferes</h2>
 
     <div class="grid">
       <div>
-        <label for="nombreChofer">Nombre del chofer</label>
-        <input type="text" id="nombreChofer" placeholder="Nombre completo" />
+        <label>Nombre del chofer</label>
+        <input type="text" id="nombreChofer" />
       </div>
 
       <div>
-        <label for="emailLogin">Correo</label>
-        <input type="email" id="emailLogin" placeholder="correo@ejemplo.com" />
+        <label>Correo</label>
+        <input type="email" id="emailLogin" />
       </div>
 
       <div>
-        <label for="passwordLogin">Contraseña</label>
-        <input type="password" id="passwordLogin" placeholder="Contraseña" />
+        <label>Contraseña</label>
+        <input type="password" id="passwordLogin" />
       </div>
     </div>
 
     <div class="acciones">
-      <button type="button" id="btnRegister">Registrar chofer</button>
+      <button type="button" id="btnRegister">Registrar</button>
       <button type="button" id="btnLogin">Ingresar</button>
-      <button type="button" id="btnLogout">Cerrar sesión</button>
+      <button type="button" id="btnLogout">Salir</button>
     </div>
 
-    <div id="usuarioActivo" class="usuario-activo">Sin sesión iniciada</div>
+    <div id="usuarioActivo"></div>
   </div>
 
+  <!-- ================= BOTONES PRINCIPALES ================= -->
   <div class="botones">
     <button type="button" id="btnSiniestros">Siniestros</button>
     <button type="button" id="btnAsistencias">Asistencias</button>
+    <button type="button" id="btnOtros">Otros</button>
   </div>
 
-  <div id="tipoSeleccionadoBox" class="tipo-box hidden">
-    Tipo seleccionado: <span id="tipoTexto"></span>
+  <!-- ================= BOTONES SECUNDARIOS OTROS ================= -->
+  <div class="botonera-secundaria hidden" id="otrosOpciones">
+    <button type="button" id="btnEntregas" class="btn-azul" onclick="seleccionarTipo('Entregas')">
+      Entregas
+    </button>
+
+    <button type="button" id="btnCorralon" class="btn-azul" onclick="seleccionarTipo('Corralón')">
+      Corralón
+    </button>
+
+    <button type="button" id="btnSinSeguro" class="btn-azul" onclick="seleccionarTipo('Sin Seguro')">
+      Sin Seguro
+    </button>
+
+    <button type="button" id="btnFacturas" class="btn-azul" onclick="seleccionarTipo('Zona de Facturación')">
+      Zona de Facturación
+    </button>
   </div>
 
+  <div id="tipoSeleccionadoBox" class="hidden">
+    Tipo seleccionado:
+    <span id="tipoTexto"></span>
+  </div>
+
+  <!-- ================= FORMULARIO PRINCIPAL SINIESTRO / ASISTENCIA ================= -->
   <div id="formulario" class="hidden">
-    <h2>Seleccionar Seguro</h2>
-
-    <select id="seguro">
-      <option value="">Seleccionar Seguro</option>
-      <option>AFIRME</option>
-      <option>AIG</option>
-      <option>ANA</option>
-      <option>ATLAS</option>
-      <option>AXA</option>
-      <option>BANORTE</option>
-      <option>BBVA</option>
-      <option>BX+</option>
-      <option>CHUBB</option>
-      <option>EL POTOSÍ</option>
-      <option>GENERAL DE SEGUROS</option>
-      <option>GNP</option>
-      <option>HDI</option>
-      <option>IKE</option>
-      <option>INBURSA</option>
-      <option>LA LATINO</option>
-      <option>MAPFRE</option>
-      <option>PRIMERO SEGUROS</option>
-      <option>QUÁLITAS</option>
-      <option>SURA</option>
-      <option>ZURICH</option>
-      <option>OTROS</option>
-    </select>
+    <h2>Datos</h2>
 
     <div class="grid">
       <div>
-        <label for="fecha">Fecha</label>
+        <label>Seguro</label>
+        <input type="text" id="seguro" placeholder="Seguro" />
+      </div>
+
+      <div>
+        <label>Fecha</label>
         <input type="date" id="fecha" />
       </div>
 
       <div>
-        <label for="siniestro">Siniestro</label>
-        <input type="text" id="siniestro" placeholder="Número de siniestro" />
+        <label>Siniestro</label>
+        <input type="text" id="siniestro" placeholder="Siniestro" />
       </div>
 
       <div>
-        <label for="folio">Folio</label>
+        <label>Folio</label>
         <input type="text" id="folio" placeholder="Folio" />
       </div>
 
       <div>
-        <label for="marca">Marca</label>
+        <label>Marca</label>
         <input type="text" id="marca" placeholder="Marca" />
       </div>
 
       <div>
-        <label for="submarca">Sub marca</label>
-        <input type="text" id="submarca" placeholder="Sub marca" />
+        <label>Submarca</label>
+        <input type="text" id="submarca" placeholder="Submarca" />
       </div>
 
       <div>
-        <label for="anio">Año</label>
+        <label>Año</label>
         <input type="text" id="anio" placeholder="Año" />
       </div>
 
       <div>
-        <label for="placas">Placas</label>
+        <label>Placas</label>
         <input type="text" id="placas" placeholder="Placas" />
       </div>
 
       <div>
-        <label for="color">Color</label>
+        <label>Color</label>
         <input type="text" id="color" placeholder="Color" />
       </div>
 
       <div>
-        <label for="fotoUnidad">Foto Unidad</label>
+        <label>Foto Unidad</label>
         <input type="file" id="fotoUnidad" accept="image/*" />
       </div>
 
       <div>
-        <label for="fotoVale">Foto Vale</label>
+        <label>Foto Vale</label>
         <input type="file" id="fotoVale" accept="image/*" />
       </div>
     </div>
 
     <div class="acciones">
       <button type="button" id="btnGuardar">Guardar</button>
-      <button type="button" id="btnExcel">Recargar registros</button>
+      <button type="button" id="btnExcel">Recargar</button>
     </div>
   </div>
 
-  <div class="busqueda-box">
-    <h2>Buscar Registros</h2>
+  <!-- ================= FORMULARIO ENTREGAS ================= -->
+  <div id="formEntregas" class="hidden">
+    <h2>Entregas</h2>
 
     <div class="grid">
       <div>
-        <label for="buscarFecha">Fecha</label>
+        <label>Buscar por placas</label>
+        <input type="text" id="buscarEntregaPlaca" placeholder="Placas" />
+      </div>
+
+      <div>
+        <label>Buscar por siniestro</label>
+        <input type="text" id="buscarEntregaSiniestro" placeholder="Siniestro" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnBuscarEntrega">Autollenar</button>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label>Fecha</label>
+        <input type="date" id="entregaFecha" />
+      </div>
+
+      <div>
+        <label>Seguro</label>
+        <input type="text" id="entregaSeguro" placeholder="Seguro" />
+      </div>
+
+      <div>
+        <label>Tipo base</label>
+        <input type="text" id="entregaTipoBase" placeholder="Tipo base" />
+      </div>
+
+      <div>
+        <label>Siniestro</label>
+        <input type="text" id="entregaSiniestro" placeholder="Siniestro" />
+      </div>
+
+      <div>
+        <label>Folio</label>
+        <input type="text" id="entregaFolio" placeholder="Folio" />
+      </div>
+
+      <div>
+        <label>Marca</label>
+        <input type="text" id="entregaMarca" placeholder="Marca" />
+      </div>
+
+      <div>
+        <label>Submarca</label>
+        <input type="text" id="entregaSubmarca" placeholder="Submarca" />
+      </div>
+
+      <div>
+        <label>Año</label>
+        <input type="text" id="entregaAnio" placeholder="Año" />
+      </div>
+
+      <div>
+        <label>Placas</label>
+        <input type="text" id="entregaPlacas" placeholder="Placas" />
+      </div>
+
+      <div>
+        <label>Color</label>
+        <input type="text" id="entregaColor" placeholder="Color" />
+      </div>
+
+      <div>
+        <label>Nombre del taller</label>
+        <input type="text" id="nombreTaller" placeholder="Nombre del taller" />
+      </div>
+
+      <div>
+        <label>Quién recibe</label>
+        <input type="text" id="quienRecibe" placeholder="Quién recibe" />
+      </div>
+
+      <div>
+        <label>Foto en taller</label>
+        <input type="file" id="fotoTaller" accept="image/*" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnGuardarEntrega">Guardar Entrega</button>
+    </div>
+  </div>
+
+  <!-- ================= FORMULARIO CORRALON ================= -->
+  <div id="formCorralon" class="hidden">
+    <h2>Corralón</h2>
+
+    <div class="grid">
+      <div>
+        <label>Fecha</label>
+        <input type="date" id="corralonFecha" />
+      </div>
+
+      <div>
+        <label>Seguro</label>
+        <input type="text" id="corralonSeguro" placeholder="Seguro" />
+      </div>
+
+      <div>
+        <label>Siniestro</label>
+        <input type="text" id="corralonSiniestro" placeholder="Siniestro" />
+      </div>
+
+      <div>
+        <label>Folio</label>
+        <input type="text" id="corralonFolio" placeholder="Folio" />
+      </div>
+
+      <div>
+        <label>Marca</label>
+        <input type="text" id="corralonMarca" placeholder="Marca" />
+      </div>
+
+      <div>
+        <label>Submarca</label>
+        <input type="text" id="corralonSubmarca" placeholder="Submarca" />
+      </div>
+
+      <div>
+        <label>Año</label>
+        <input type="text" id="corralonAnio" placeholder="Año" />
+      </div>
+
+      <div>
+        <label>Placas</label>
+        <input type="text" id="corralonPlacas" placeholder="Placas" />
+      </div>
+
+      <div>
+        <label>Color</label>
+        <input type="text" id="corralonColor" placeholder="Color" />
+      </div>
+
+      <div>
+        <label>Número de inventario</label>
+        <input type="text" id="numeroInventario" placeholder="Número de inventario" />
+      </div>
+
+      <div>
+        <label>Número de acta</label>
+        <input type="text" id="numeroActa" placeholder="Número de acta" />
+      </div>
+
+      <div>
+        <label>Motivo del delito</label>
+        <input type="text" id="motivoDelito" placeholder="Motivo del delito" />
+      </div>
+
+      <div>
+        <label>Teléfono del cliente</label>
+        <input type="text" id="telefonoClienteCorralon" placeholder="Teléfono del cliente" />
+      </div>
+
+      <div>
+        <label>Foto inventario</label>
+        <input type="file" id="fotoInventario" accept="image/*" />
+      </div>
+
+      <div>
+        <label>Foto carro corralón</label>
+        <input type="file" id="fotoCarroCorralon" accept="image/*" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnGuardarCorralon">Guardar Corralón</button>
+    </div>
+  </div>
+
+  <!-- ================= FORMULARIO SIN SEGURO ================= -->
+  <div id="formSinSeguro" class="hidden">
+    <h2>Sin Seguro</h2>
+
+    <div class="grid">
+      <div>
+        <label>Fecha</label>
+        <input type="date" id="sinSeguroFecha" />
+      </div>
+
+      <div>
+        <label>Marca</label>
+        <input type="text" id="sinSeguroMarca" placeholder="Marca" />
+      </div>
+
+      <div>
+        <label>Submarca</label>
+        <input type="text" id="sinSeguroSubmarca" placeholder="Submarca" />
+      </div>
+
+      <div>
+        <label>Año</label>
+        <input type="text" id="sinSeguroAnio" placeholder="Año" />
+      </div>
+
+      <div>
+        <label>Placas</label>
+        <input type="text" id="sinSeguroPlacas" placeholder="Placas" />
+      </div>
+
+      <div>
+        <label>Color</label>
+        <input type="text" id="sinSeguroColor" placeholder="Color" />
+      </div>
+
+      <div>
+        <label>Nombre cliente</label>
+        <input type="text" id="sinSeguroNombreCliente" placeholder="Nombre cliente" />
+      </div>
+
+      <div>
+        <label>Teléfono cliente</label>
+        <input type="text" id="sinSeguroTelefonoCliente" placeholder="Teléfono cliente" />
+      </div>
+
+      <div>
+        <label>Monto cobrado</label>
+        <input type="number" id="sinSeguroMontoCobrado" placeholder="Monto cobrado" />
+      </div>
+
+      <div>
+        <label>Foto unidad</label>
+        <input type="file" id="sinSeguroFotoUnidad" accept="image/*" />
+      </div>
+
+      <div>
+        <label>Foto servicio</label>
+        <input type="file" id="sinSeguroFotoServicio" accept="image/*" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnGuardarSinSeguro">Guardar Sin Seguro</button>
+    </div>
+  </div>
+
+  <!-- ================= FORMULARIO FACTURACION ================= -->
+  <div id="formFacturas" class="hidden">
+    <h2>Zona de Facturación</h2>
+
+    <div class="grid">
+      <div>
+        <label>Razón Social</label>
+        <input type="text" id="facturaRazonSocial" placeholder="Razón Social" />
+      </div>
+
+      <div>
+        <label>RFC</label>
+        <input type="text" id="facturaRFC" placeholder="RFC" />
+      </div>
+
+      <div>
+        <label>Domicilio Fiscal</label>
+        <input type="text" id="facturaDomicilio" placeholder="Domicilio Fiscal" />
+      </div>
+
+      <div>
+        <label>Código Postal</label>
+        <input type="text" id="facturaCodigoPostal" placeholder="Código Postal" />
+      </div>
+
+      <div>
+        <label>Régimen Fiscal</label>
+        <select id="facturaRegimen">
+          <option value="">Régimen Fiscal</option>
+          <option>601 - General de Ley</option>
+          <option>612 - Personas Físicas</option>
+          <option>626 - RESICO</option>
+        </select>
+      </div>
+
+      <div>
+        <label>Correo Cliente</label>
+        <input type="email" id="facturaCorreo" placeholder="Correo Cliente" />
+      </div>
+
+      <div>
+        <label>Marca</label>
+        <input type="text" id="facturaMarca" placeholder="Marca" />
+      </div>
+
+      <div>
+        <label>Submarca</label>
+        <input type="text" id="facturaSubmarca" placeholder="Submarca" />
+      </div>
+
+      <div>
+        <label>Año</label>
+        <input type="text" id="facturaAnio" placeholder="Año" />
+      </div>
+
+      <div>
+        <label>Placas</label>
+        <input type="text" id="facturaPlacas" placeholder="Placas" />
+      </div>
+
+      <div>
+        <label>Monto sin IVA</label>
+        <input type="number" id="facturaMontoSinIVA" placeholder="Monto sin IVA" />
+      </div>
+
+      <div>
+        <label>IVA</label>
+        <input type="number" id="facturaIVA" placeholder="IVA" readonly />
+      </div>
+
+      <div>
+        <label>Total</label>
+        <input type="number" id="facturaTotal" placeholder="Total" readonly />
+      </div>
+
+      <div>
+        <label>Constancia Fiscal (Imagen o PDF)</label>
+        <input type="file" id="facturaArchivo" accept="image/*,.pdf,application/pdf" />
+      </div>
+    </div>
+
+    <div class="acciones">
+      <button type="button" id="btnGuardarFactura">Guardar Factura</button>
+    </div>
+  </div>
+
+  <!-- ================= BUSQUEDA ================= -->
+  <div class="busqueda-box">
+    <h2>Buscar</h2>
+
+    <div class="grid">
+      <div>
+        <label>Fecha</label>
         <input type="date" id="buscarFecha" />
       </div>
 
       <div>
-        <label for="buscarPlacas">Placas</label>
-        <input type="text" id="buscarPlacas" placeholder="Buscar por placas" />
+        <label>Placas</label>
+        <input type="text" id="buscarPlacas" placeholder="Placas" />
       </div>
 
       <div>
-        <label for="buscarMarca">Marca</label>
-        <input type="text" id="buscarMarca" placeholder="Buscar por marca" />
+        <label>Marca</label>
+        <input type="text" id="buscarMarca" placeholder="Marca" />
       </div>
 
       <div>
-        <label for="buscarSubmarca">Sub marca</label>
-        <input type="text" id="buscarSubmarca" placeholder="Buscar por sub marca" />
+        <label>Submarca</label>
+        <input type="text" id="buscarSubmarca" placeholder="Submarca" />
       </div>
     </div>
 
     <div class="acciones">
       <button type="button" id="btnBuscar">Buscar</button>
-      <button type="button" id="btnLimpiarBusqueda">Limpiar búsqueda</button>
+      <button type="button" id="btnLimpiarBusqueda">Limpiar</button>
     </div>
   </div>
 
+  <!-- ================= TABLA PRINCIPAL ================= -->
   <h2>Registros Guardados</h2>
 
   <div class="tabla-wrap">
-    <table id="tabla">
+    <table>
       <thead>
         <tr>
           <th>Fecha</th>
@@ -205,12 +530,119 @@
       <tbody id="tablaBody"></tbody>
     </table>
   </div>
+
+  <!-- ================= TABLA ENTREGAS ================= -->
+  <h2>Entregas</h2>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Seguro</th>
+          <th>Tipo Base</th>
+          <th>Siniestro</th>
+          <th>Folio</th>
+          <th>Marca</th>
+          <th>Submarca</th>
+          <th>Año</th>
+          <th>Placas</th>
+          <th>Color</th>
+          <th>Taller</th>
+          <th>Recibe</th>
+          <th>Chofer</th>
+          <th>Correo</th>
+          <th>Foto</th>
+        </tr>
+      </thead>
+      <tbody id="tablaEntregasBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ================= TABLA CORRALON ================= -->
+  <h2>Corralón</h2>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Seguro</th>
+          <th>Siniestro</th>
+          <th>Folio</th>
+          <th>Marca</th>
+          <th>Submarca</th>
+          <th>Año</th>
+          <th>Placas</th>
+          <th>Color</th>
+          <th>Inventario</th>
+          <th>Acta</th>
+          <th>Motivo</th>
+          <th>Teléfono</th>
+          <th>Chofer</th>
+          <th>Correo</th>
+          <th>Foto Inventario</th>
+          <th>Foto Carro</th>
+        </tr>
+      </thead>
+      <tbody id="tablaCorralonBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ================= TABLA SIN SEGURO ================= -->
+  <h2>Sin Seguro</h2>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Marca</th>
+          <th>Submarca</th>
+          <th>Año</th>
+          <th>Placas</th>
+          <th>Color</th>
+          <th>Cliente</th>
+          <th>Teléfono</th>
+          <th>Monto</th>
+          <th>Chofer</th>
+          <th>Correo</th>
+          <th>Foto Unidad</th>
+          <th>Foto Servicio</th>
+        </tr>
+      </thead>
+      <tbody id="tablaSinSeguroBody"></tbody>
+    </table>
+  </div>
+
+  <!-- ================= TABLA FACTURACION ================= -->
+  <h2>Zona de Facturación</h2>
+
+  <div class="tabla-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Razón Social</th>
+          <th>RFC</th>
+          <th>Domicilio</th>
+          <th>CP</th>
+          <th>Régimen</th>
+          <th>Correo</th>
+          <th>Marca</th>
+          <th>Submarca</th>
+          <th>Año</th>
+          <th>Placas</th>
+          <th>Monto</th>
+          <th>IVA</th>
+          <th>Total</th>
+          <th>Chofer</th>
+          <th>Correo Chofer</th>
+          <th>Constancia</th>
+        </tr>
+      </thead>
+      <tbody id="tablaFacturasBody"></tbody>
+    </table>
+  </div>
+
 </div>
-    <script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js'></script>
-<script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js'></script>
-<script src='https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js'></script><script  src="./script.js"></script>
-
-  </body>
-  
-</html>
-
