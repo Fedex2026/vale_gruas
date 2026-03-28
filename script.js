@@ -974,7 +974,6 @@ function renderTablaFacturas() {
       <td>${escapeHtml(r.totalConIVA)}</td>
       <td>${escapeHtml(r.choferNombre)}</td>
       <td>${escapeHtml(r.choferCorreo)}</td>
-      <td>${renderArchivo(r.archivoConstancia, "Constancia")}</td>
     `;
     tablaFacturasBody.appendChild(tr);
   });
@@ -1119,4 +1118,54 @@ function togglePassword() {
   } else {
     input.type = "password";
   }
+}
+
+function exportarExcelFacturas() {
+  let tabla = [
+    [
+      "Fecha",
+      "Razón Social",
+      "RFC",
+      "Domicilio",
+      "Código Postal",
+      "Régimen",
+      "Correo",
+      "Marca",
+      "Submarca",
+      "Año",
+      "Placas",
+      "Monto",
+      "IVA",
+      "Total",
+      "Chofer"
+    ]
+  ];
+
+  registrosFacturas.forEach(r => {
+    tabla.push([
+      r.fecha || "",
+      r.razonSocial || "",
+      r.rfc || "",
+      r.domicilioFiscal || "",
+      r.codigoPostal || "",
+      r.regimenFiscal || "",
+      r.correoCliente || "",
+      r.marca || "",
+      r.submarca || "",
+      r.anio || "",
+      r.placas || "",
+      r.montoSinIVA || "",
+      r.iva || "",
+      r.totalConIVA || "",
+      r.choferNombre || ""
+    ]);
+  });
+
+  let csv = tabla.map(e => e.join(",")).join("\n");
+  let blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+
+  let link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "Facturas_ValesGruas.csv";
+  link.click();
 }
