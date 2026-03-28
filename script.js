@@ -50,7 +50,9 @@ const tipoTexto = document.getElementById("tipoTexto");
 const btnGuardar = document.getElementById("btnGuardar");
 const btnExcel = document.getElementById("btnExcel");
 
+if (btnExcel) {
 btnExcel.addEventListener("click", exportarExcelFacturas);
+}
 
 const btnLimpiarBusqueda = document.getElementById("btnLimpiarBusqueda");
 
