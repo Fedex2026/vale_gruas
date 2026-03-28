@@ -1193,6 +1193,6 @@ let link = document.createElement("a");
 link.href = url;
 link.download = "Factura_Individual.csv";
 link.click();
+}
 
-}
-}
+
