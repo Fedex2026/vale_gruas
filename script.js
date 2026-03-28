@@ -1141,9 +1141,10 @@ function exportarExcelFacturas() {
       "Monto",
       "IVA",
       "Total",
-      "Chofer"
-    ]
-  ];
+      "Chofer",
+      "Correo Chofer"
+       ]
+      ];
 
   registrosFacturas.forEach(r => {
     tabla.push([
@@ -1161,7 +1162,8 @@ function exportarExcelFacturas() {
       r.montoSinIVA || "",
       r.iva || "",
       r.totalConIVA || "",
-      r.choferNombre || ""
+      r.choferNombre || "",
+      r.choferCorreo || ""
     ]);
   });
 
