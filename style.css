@@ -318,3 +318,22 @@ color: #1155cc;
 .seccion-colapsable[open] summary::before {
 content: "▼ ";
 }
+
+.password-wrap {
+position: relative;
+}
+
+.password-wrap input {
+width: 100%;
+padding-right: 45px;
+}
+
+.toggle-password {
+position: absolute;
+right: 12px;
+top: 50%;
+transform: translateY(-50%);
+cursor: pointer;
+font-size: 18px;
+color: #666;
+}
