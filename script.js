@@ -1111,3 +1111,12 @@ function escapeHtml(texto) {
   div.textContent = texto || "";
   return div.innerHTML;
 }
+function togglePassword() {
+  const input = document.getElementById("passwordLogin");
+
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+}
