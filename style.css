@@ -292,3 +292,29 @@ tbody tr:hover {
     min-width: 100%;
   }
 }
+.seccion-colapsable summary {
+list-style: none;
+cursor: pointer;
+padding: 0;
+margin: 0 0 8px 0;
+font-size: 28px;
+font-weight: bold;
+color: #1155cc;
+font-family: Arial, Helvetica, sans-serif;
+background: transparent;
+border: none;
+}
+
+.seccion-colapsable summary::-webkit-details-marker {
+display: none;
+}
+
+.seccion-colapsable summary::before {
+content: "▶ ";
+font-size: 18px;
+color: #1155cc;
+}
+
+.seccion-colapsable[open] summary::before {
+content: "▼ ";
+}
