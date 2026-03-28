@@ -361,3 +361,16 @@ link.download = "Factura.csv";
 link.click();
 
 }
+  .btnExcelFactura{
+background:#16a34a;
+color:white;
+border:none;
+padding:6px 12px;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btnExcelFactura:hover{
+background:#15803d;
+}
