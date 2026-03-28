@@ -1170,4 +1170,29 @@ function exportarExcelFacturas() {
   link.href = URL.createObjectURL(blob);
   link.download = "Facturas_ValesGruas.csv";
   link.click();
+  }
+  function exportarFila(btn){
+
+let fila = btn.closest("tr");
+let celdas = fila.querySelectorAll("td");
+
+let datos = [];
+
+celdas.forEach((celda,index)=>{
+if(index < celdas.length -1){
+datos.push(celda.innerText);
+}
+});
+
+let csv = datos.join(",");
+
+let blob = new Blob([csv], { type: "text/csv" });
+let url = URL.createObjectURL(blob);
+
+let link = document.createElement("a");
+link.href = url;
+link.download = "Factura_Individual.csv";
+link.click();
+
+}
 }
