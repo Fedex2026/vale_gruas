@@ -1162,7 +1162,7 @@ function renderArchivo(url, alt) {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>`;
   }
 
-  return 
+  return `
     <a href="${url}" target="_blank" rel="noopener noreferrer">
       <img src="${url}" alt="${alt}" class="foto-mini" />
     </a>
