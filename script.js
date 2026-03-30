@@ -1311,7 +1311,7 @@ function limpiarCorralon() {
   if (telefonoClienteCorralon) telefonoClienteCorralon.value = "";
   if (fotoInventario) fotoInventario.value = "";
   if (fotoCarroCorralon) fotoCarroCorralon.value = "";
-}
+};
 
 function limpiarSinSeguro() {
   if (sinSeguroFecha) sinSeguroFecha.value = "";
