@@ -1213,40 +1213,8 @@ async function editarRegistro(id, coleccion) {
     console.error(error);
     alert("Error al editar");
   }
-}
-
-function togglePassword() {
-  const input = document.getElementById("passwordLogin");
-
-  if (input.type === "password") {
-    input.type = "text";
-  } else {
-    input.type = "password";
-  }
-}
-
-function exportarExcelFacturas() {
-  let tabla = [
-    [
-      "Fecha",
-      "Razón Social",
-      "RFC",
-      "Domicilio",
-      "Código Postal",
-      "Régimen",
-      "Correo",
-      "Marca",
-      "Submarca",
-      "Año",
-      "Placas",
-      "Monto",
-      "IVA",
-      "Total",
-      "Chofer",
-      "Correo Chofer"
-       ]
-      ];
-
+}  
+  
   registrosFacturas.forEach(r => {
     tabla.push([
       r.fecha || "",
