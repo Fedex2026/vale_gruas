@@ -1453,7 +1453,7 @@ function exportarFila(btn) {
   link.download = "Factura_Individual.csv";
   link.click();
 }
-}
+
 function exportarFactura(btn) {
   let fila = btn.closest("tr");
   let celdas = fila.querySelectorAll("td");
