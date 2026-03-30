@@ -27,6 +27,20 @@ let registrosCorralon = [];
 let registrosSinSeguro = [];
 let registrosFacturas = [];
 
+let editandoId = null;
+let editandoColeccion = null;
+
+let urlsEditando = {
+  fotoUnidad: "",
+  fotoVale: "",
+  fotoTaller: "",
+  fotoInventario: "",
+  fotoCarro: "",
+  sinSeguroFotoUnidad: "",
+  sinSeguroFotoServicio: "",
+  facturaArchivo: ""
+};
+
 // -------------------- ELEMENTOS GENERALES --------------------
 const btnSiniestros = document.getElementById("btnSiniestros");
 const btnAsistencias = document.getElementById("btnAsistencias");
@@ -49,11 +63,7 @@ const tipoTexto = document.getElementById("tipoTexto");
 
 const btnGuardar = document.getElementById("btnGuardar");
 const btnExcel = document.getElementById("btnExcel");
-
-if (btnExcel) {
-btnExcel.addEventListener("click", exportarExcelFacturas);
-}
-
+const btnBuscar = document.getElementById("btnBuscar");
 const btnLimpiarBusqueda = document.getElementById("btnLimpiarBusqueda");
 
 const btnBuscarEntrega = document.getElementById("btnBuscarEntrega");
@@ -171,7 +181,7 @@ if (btnSinSeguro) btnSinSeguro.addEventListener("click", () => abrirPantallaOtro
 if (btnFacturas) btnFacturas.addEventListener("click", () => abrirPantallaOtros("Zona de Facturación"));
 
 if (btnGuardar) btnGuardar.addEventListener("click", guardarRegistro);
-if (btnExcel) btnExcel.addEventListener("click", cargarTodosLosRegistros);
+if (btnExcel) btnExcel.addEventListener("click", exportarExcelFacturas);
 if (btnBuscar) btnBuscar.addEventListener("click", buscarRegistrosVales);
 if (btnLimpiarBusqueda) btnLimpiarBusqueda.addEventListener("click", limpiarBusquedaVales);
 
@@ -360,8 +370,8 @@ async function subirImagenACloudinary(file) {
 
   const esPdf = file.type === "application/pdf";
   const uploadUrl = esPdf
-    ? `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`
-    : `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+    ? https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload
+    : https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload;
 
   const formData = new FormData();
   formData.append("file", file);
@@ -382,6 +392,29 @@ async function subirImagenACloudinary(file) {
   return data.secure_url || data.url || "";
 }
 
+// -------------------- RESET EDICIÓN --------------------
+function resetEstadoEdicion() {
+  editandoId = null;
+  editandoColeccion = null;
+
+  urlsEditando = {
+    fotoUnidad: "",
+    fotoVale: "",
+    fotoTaller: "",
+    fotoInventario: "",
+    fotoCarro: "",
+    sinSeguroFotoUnidad: "",
+    sinSeguroFotoServicio: "",
+    facturaArchivo: ""
+  };
+
+  if (btnGuardar) btnGuardar.textContent = "Guardar";
+  if (btnGuardarEntrega) btnGuardarEntrega.textContent = "Guardar Entrega";
+  if (btnGuardarCorralon) btnGuardarCorralon.textContent = "Guardar Corralón";
+  if (btnGuardarSinSeguro) btnGuardarSinSeguro.textContent = "Guardar Sin Seguro";
+  if (btnGuardarFactura) btnGuardarFactura.textContent = "Guardar Factura";
+}
+
 // -------------------- GUARDAR VALES / ASISTENCIAS --------------------
 async function guardarRegistro() {
   try {
@@ -397,36 +430,20 @@ async function guardarRegistro() {
 
     if (btnGuardar) {
       btnGuardar.disabled = true;
-      btnGuardar.textContent = "Guardando...";
+      btnGuardar.textContent = editandoColeccion === "vales" ? "Actualizando..." : "Guardando...";
     }
 
     const fotoUnidadUrl =
       fotoUnidadInput && fotoUnidadInput.files && fotoUnidadInput.files[0]
         ? await subirImagenACloudinary(fotoUnidadInput.files[0])
-        : "";
+        : urlsEditando.fotoUnidad || "";
 
     const fotoValeUrl =
       fotoValeInput && fotoValeInput.files && fotoValeInput.files[0]
         ? await subirImagenACloudinary(fotoValeInput.files[0])
-        : "";
+        : urlsEditando.fotoVale || "";
 
-    if (editandoId) {
-  await db.collection("vales").doc(editandoId).update({
-    fecha: fechaInput.value,
-  seguro: seguroInput.value.trim(),
-  tipo: tipoSeleccionado,
-  siniestro: siniestroInput ? siniestroInput.value.trim() : "",
-  folio: folioInput ? folioInput.value.trim() : "",
-  marca: marcaInput.value.trim(),
-  submarca: submarcaInput ? submarcaInput.value.trim() : "",
-  anio: anioInput ? anioInput.value.trim() : "",
-  placas: placasInput.value.trim().toUpperCase(),
-  color: colorInput ? colorInput.value.trim() : "",
-  fotoUnidad: fotoUnidadUrl,
-  fotoVale: fotoValeUrl
-});
-} else {
-  await db.collection("vales").add({
+    const datosRegistro = {
       fecha: fechaInput.value,
       seguro: seguroInput.value.trim(),
       tipo: tipoSeleccionado,
@@ -439,30 +456,39 @@ async function guardarRegistro() {
       color: colorInput ? colorInput.value.trim() : "",
       fotoUnidad: fotoUnidadUrl,
       fotoVale: fotoValeUrl,
-      createdAt: new Date().toISOString(),
       choferId: choferActual.uid,
       choferCorreo: choferActual.email || "",
       choferNombre: choferActualNombre || choferActual.email || ""
-    });
-      }
+    };
+
+    const estabaEditando = editandoId && editandoColeccion === "vales";
+
+    if (estabaEditando) {
+      datosRegistro.updatedAt = new Date().toISOString();
+      await db.collection("vales").doc(editandoId).update(datosRegistro);
+    } else {
+      datosRegistro.createdAt = new Date().toISOString();
+      await db.collection("vales").add(datosRegistro);
+    }
 
     limpiarFormularioOriginal();
+    resetEstadoEdicion();
     await cargarValesYAsistencias();
-    if (editandoColeccion === null) {
-  alert("Registro guardado correctamente.");
-} else {
-  alert("Registro actualizado correctamente.");
-}
-    editandoId = null;
-editandoColeccion = null;
-btnGuardar.textContent = "Guardar";
+
+    if (estabaEditando) {
+      alert("Registro actualizado correctamente.");
+    } else {
+      alert("Registro guardado correctamente.");
+    }
   } catch (error) {
     console.error(error);
     alert("Error al guardar: " + error.message);
   } finally {
     if (btnGuardar) {
       btnGuardar.disabled = false;
-      btnGuardar.textContent = "Guardar";
+      if (btnGuardar.textContent === "Guardando..." || btnGuardar.textContent === "Actualizando...") {
+        btnGuardar.textContent = "Guardar";
+      }
     }
   }
 }
@@ -525,15 +551,15 @@ async function guardarEntrega() {
 
     if (btnGuardarEntrega) {
       btnGuardarEntrega.disabled = true;
-      btnGuardarEntrega.textContent = "Guardando...";
+      btnGuardarEntrega.textContent = editandoColeccion === "entregas" ? "Actualizando..." : "Guardando...";
     }
 
     const fotoTallerUrl =
       fotoTaller && fotoTaller.files && fotoTaller.files[0]
         ? await subirImagenACloudinary(fotoTaller.files[0])
-        : "";
+        : urlsEditando.fotoTaller || "";
 
-    await db.collection("entregas").add({
+    const datosEntrega = {
       fecha: entregaFecha ? entregaFecha.value : "",
       seguro: entregaSeguro ? entregaSeguro.value.trim() : "",
       tipoBase: entregaTipoBase ? entregaTipoBase.value.trim() : "",
@@ -547,22 +573,39 @@ async function guardarEntrega() {
       nombreTaller: taller,
       quienRecibe: recibe,
       fotoTaller: fotoTallerUrl,
-      createdAt: new Date().toISOString(),
       choferId: choferActual.uid,
       choferCorreo: choferActual.email || "",
       choferNombre: choferActualNombre || choferActual.email || ""
-    });
+    };
+
+    const estabaEditando = editandoId && editandoColeccion === "entregas";
+
+    if (estabaEditando) {
+      datosEntrega.updatedAt = new Date().toISOString();
+      await db.collection("entregas").doc(editandoId).update(datosEntrega);
+    } else {
+      datosEntrega.createdAt = new Date().toISOString();
+      await db.collection("entregas").add(datosEntrega);
+    }
 
     limpiarEntrega();
+    resetEstadoEdicion();
     await cargarEntregas();
-    alert("Entrega guardada correctamente.");
+
+    if (estabaEditando) {
+      alert("Entrega actualizada correctamente.");
+    } else {
+      alert("Entrega guardada correctamente.");
+    }
   } catch (error) {
     console.error(error);
     alert("Error al guardar entrega: " + error.message);
   } finally {
     if (btnGuardarEntrega) {
       btnGuardarEntrega.disabled = false;
-      btnGuardarEntrega.textContent = "Guardar Entrega";
+      if (btnGuardarEntrega.textContent === "Guardando..." || btnGuardarEntrega.textContent === "Actualizando...") {
+        btnGuardarEntrega.textContent = "Guardar Entrega";
+      }
     }
   }
 }
@@ -574,20 +617,20 @@ async function guardarCorralon() {
 
     if (btnGuardarCorralon) {
       btnGuardarCorralon.disabled = true;
-      btnGuardarCorralon.textContent = "Guardando...";
+      btnGuardarCorralon.textContent = editandoColeccion === "corralon" ? "Actualizando..." : "Guardando...";
     }
 
     const fotoInventarioUrl =
       fotoInventario && fotoInventario.files && fotoInventario.files[0]
         ? await subirImagenACloudinary(fotoInventario.files[0])
-        : "";
+        : urlsEditando.fotoInventario || "";
 
     const fotoCarroUrl =
       fotoCarroCorralon && fotoCarroCorralon.files && fotoCarroCorralon.files[0]
         ? await subirImagenACloudinary(fotoCarroCorralon.files[0])
-        : "";
+        : urlsEditando.fotoCarro || "";
 
-    await db.collection("corralon").add({
+    const datosCorralon = {
       fecha: corralonFecha ? corralonFecha.value : "",
       seguro: corralonSeguro ? corralonSeguro.value.trim() : "",
       siniestro: corralonSiniestro ? corralonSiniestro.value.trim() : "",
@@ -603,22 +646,39 @@ async function guardarCorralon() {
       telefonoCliente: telefonoClienteCorralon ? telefonoClienteCorralon.value.trim() : "",
       fotoInventario: fotoInventarioUrl,
       fotoCarro: fotoCarroUrl,
-      createdAt: new Date().toISOString(),
       choferId: choferActual.uid,
       choferCorreo: choferActual.email || "",
       choferNombre: choferActualNombre || choferActual.email || ""
-    });
+    };
+
+    const estabaEditando = editandoId && editandoColeccion === "corralon";
+
+    if (estabaEditando) {
+      datosCorralon.updatedAt = new Date().toISOString();
+      await db.collection("corralon").doc(editandoId).update(datosCorralon);
+    } else {
+      datosCorralon.createdAt = new Date().toISOString();
+      await db.collection("corralon").add(datosCorralon);
+    }
 
     limpiarCorralon();
+    resetEstadoEdicion();
     await cargarCorralon();
-    alert("Corralón guardado correctamente.");
+
+    if (estabaEditando) {
+      alert("Corralón actualizado correctamente.");
+    } else {
+      alert("Corralón guardado correctamente.");
+    }
   } catch (error) {
     console.error(error);
     alert("Error al guardar corralón: " + error.message);
   } finally {
     if (btnGuardarCorralon) {
       btnGuardarCorralon.disabled = false;
-      btnGuardarCorralon.textContent = "Guardar Corralón";
+      if (btnGuardarCorralon.textContent === "Guardando..." || btnGuardarCorralon.textContent === "Actualizando...") {
+        btnGuardarCorralon.textContent = "Guardar Corralón";
+      }
     }
   }
 }
@@ -630,20 +690,20 @@ async function guardarSinSeguro() {
 
     if (btnGuardarSinSeguro) {
       btnGuardarSinSeguro.disabled = true;
-      btnGuardarSinSeguro.textContent = "Guardando...";
+      btnGuardarSinSeguro.textContent = editandoColeccion === "sin_seguro" ? "Actualizando..." : "Guardando...";
     }
 
     const fotoUnidadUrl =
       sinSeguroFotoUnidad && sinSeguroFotoUnidad.files && sinSeguroFotoUnidad.files[0]
         ? await subirImagenACloudinary(sinSeguroFotoUnidad.files[0])
-        : "";
+        : urlsEditando.sinSeguroFotoUnidad || "";
 
     const fotoServicioUrl =
       sinSeguroFotoServicio && sinSeguroFotoServicio.files && sinSeguroFotoServicio.files[0]
         ? await subirImagenACloudinary(sinSeguroFotoServicio.files[0])
-        : "";
+        : urlsEditando.sinSeguroFotoServicio || "";
 
-    await db.collection("sin_seguro").add({
+    const datosSinSeguro = {
       fecha: sinSeguroFecha ? sinSeguroFecha.value : "",
       marca: sinSeguroMarca ? sinSeguroMarca.value.trim() : "",
       submarca: sinSeguroSubmarca ? sinSeguroSubmarca.value.trim() : "",
@@ -655,22 +715,39 @@ async function guardarSinSeguro() {
       montoCobrado: sinSeguroMontoCobrado ? Number(sinSeguroMontoCobrado.value || 0) : 0,
       fotoUnidad: fotoUnidadUrl,
       fotoServicio: fotoServicioUrl,
-      createdAt: new Date().toISOString(),
       choferId: choferActual.uid,
       choferCorreo: choferActual.email || "",
       choferNombre: choferActualNombre || choferActual.email || ""
-    });
+    };
+
+    const estabaEditando = editandoId && editandoColeccion === "sin_seguro";
+
+    if (estabaEditando) {
+      datosSinSeguro.updatedAt = new Date().toISOString();
+      await db.collection("sin_seguro").doc(editandoId).update(datosSinSeguro);
+    } else {
+      datosSinSeguro.createdAt = new Date().toISOString();
+      await db.collection("sin_seguro").add(datosSinSeguro);
+    }
 
     limpiarSinSeguro();
+    resetEstadoEdicion();
     await cargarSinSeguro();
-    alert("Registro sin seguro guardado correctamente.");
+
+    if (estabaEditando) {
+      alert("Registro sin seguro actualizado correctamente.");
+    } else {
+      alert("Registro sin seguro guardado correctamente.");
+    }
   } catch (error) {
     console.error(error);
     alert("Error al guardar sin seguro: " + error.message);
   } finally {
     if (btnGuardarSinSeguro) {
       btnGuardarSinSeguro.disabled = false;
-      btnGuardarSinSeguro.textContent = "Guardar Sin Seguro";
+      if (btnGuardarSinSeguro.textContent === "Guardando..." || btnGuardarSinSeguro.textContent === "Actualizando...") {
+        btnGuardarSinSeguro.textContent = "Guardar Sin Seguro";
+      }
     }
   }
 }
@@ -693,15 +770,15 @@ async function guardarFactura() {
 
     if (btnGuardarFactura) {
       btnGuardarFactura.disabled = true;
-      btnGuardarFactura.textContent = "Guardando...";
+      btnGuardarFactura.textContent = editandoColeccion === "facturas" ? "Actualizando..." : "Guardando...";
     }
 
     const archivoUrl =
       facturaArchivo && facturaArchivo.files && facturaArchivo.files[0]
         ? await subirImagenACloudinary(facturaArchivo.files[0])
-        : "";
+        : urlsEditando.facturaArchivo || "";
 
-    await db.collection("facturas").add({
+    const datosFactura = {
       fecha: new Date().toISOString().slice(0, 10),
       razonSocial: facturaRazonSocial ? facturaRazonSocial.value.trim() : "",
       rfc: facturaRFC ? facturaRFC.value.trim() : "",
@@ -717,22 +794,39 @@ async function guardarFactura() {
       iva: facturaIVA ? Number(facturaIVA.value || 0) : 0,
       totalConIVA: facturaTotal ? Number(facturaTotal.value || 0) : 0,
       archivoConstancia: archivoUrl,
-      createdAt: new Date().toISOString(),
       choferId: choferActual.uid,
       choferCorreo: choferActual.email || "",
       choferNombre: choferActualNombre || choferActual.email || ""
-    });
+    };
+
+    const estabaEditando = editandoId && editandoColeccion === "facturas";
+
+    if (estabaEditando) {
+      datosFactura.updatedAt = new Date().toISOString();
+      await db.collection("facturas").doc(editandoId).update(datosFactura);
+    } else {
+      datosFactura.createdAt = new Date().toISOString();
+      await db.collection("facturas").add(datosFactura);
+    }
 
     limpiarFactura();
+    resetEstadoEdicion();
     await cargarFacturas();
-    alert("Factura guardada correctamente.");
+
+    if (estabaEditando) {
+      alert("Factura actualizada correctamente.");
+    } else {
+      alert("Factura guardada correctamente.");
+    }
   } catch (error) {
     console.error(error);
     alert("Error al guardar factura: " + error.message);
   } finally {
     if (btnGuardarFactura) {
       btnGuardarFactura.disabled = false;
-      btnGuardarFactura.textContent = "Guardar Factura";
+      if (btnGuardarFactura.textContent === "Guardando..." || btnGuardarFactura.textContent === "Actualizando...") {
+        btnGuardarFactura.textContent = "Guardar Factura";
+      }
     }
   }
 }
@@ -893,12 +987,8 @@ function renderTablaVales(lista) {
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoUnidad, "Foto Unidad")}</td>
       <td>${renderArchivo(r.fotoVale, "Foto Vale")}</td>
-      <td>
-      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
-      Editar
-     </button>
-     </td>
-     `;
+      <td><button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">Editar</button></td>
+    `;
     tablaBody.appendChild(tr);
   });
 }
@@ -925,12 +1015,8 @@ function renderTablaEntregas() {
       <td>${escapeHtml(r.choferNombre)}</td>
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoTaller, "Foto Taller")}</td>
-      <td>
-      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
-      Editar
-      </button>
-      </td>
-     `;
+      <td><button class="btn-editar" onclick="editarRegistro('${r.id}','entregas')">Editar</button></td>
+    `;
     tablaEntregasBody.appendChild(tr);
   });
 }
@@ -959,11 +1045,7 @@ function renderTablaCorralon() {
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoInventario, "Foto Inventario")}</td>
       <td>${renderArchivo(r.fotoCarro, "Foto Carro")}</td>
-      <td>
-      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
-      Editar
-      </button>
-      </td>
+      <td><button class="btn-editar" onclick="editarRegistro('${r.id}','corralon')">Editar</button></td>
     `;
     tablaCorralonBody.appendChild(tr);
   });
@@ -989,11 +1071,7 @@ function renderTablaSinSeguro() {
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoUnidad, "Foto Unidad")}</td>
       <td>${renderArchivo(r.fotoServicio, "Foto Servicio")}</td>
-      <td>
-      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
-      Editar
-      </button>
-      </td>
+      <td><button class="btn-editar" onclick="editarRegistro('${r.id}','sin_seguro')">Editar</button></td>
     `;
     tablaSinSeguroBody.appendChild(tr);
   });
@@ -1023,14 +1101,139 @@ function renderTablaFacturas() {
       <td>${escapeHtml(r.choferNombre)}</td>
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td><button class="btnExcelFactura" onclick="exportarFactura(this)">Excel</button></td>
-      <td>
-      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
-      Editar
-      </button>
-      </td>
+      <td><button class="btn-editar" onclick="editarRegistro('${r.id}','facturas')">Editar</button></td>
     `;
     tablaFacturasBody.appendChild(tr);
   });
+}
+
+// -------------------- EDITAR --------------------
+async function editarRegistro(id, coleccion) {
+  try {
+    if (!choferActual) return alert("Primero inicia sesión.");
+
+    editandoId = id;
+    editandoColeccion = coleccion;
+
+    const docSnap = await db.collection(coleccion).doc(id).get();
+
+    if (!docSnap.exists) {
+      return alert("No se encontró el registro.");
+    }
+
+    const data = docSnap.data();
+
+    ocultarTodosLosFormularios();
+
+    if (coleccion === "vales") {
+      seleccionarPantallaPrincipal(data.tipo || "Siniestro");
+
+      if (seguroInput) seguroInput.value = data.seguro || "";
+      if (fechaInput) fechaInput.value = data.fecha || "";
+      if (siniestroInput) siniestroInput.value = data.siniestro || "";
+      if (folioInput) folioInput.value = data.folio || "";
+      if (marcaInput) marcaInput.value = data.marca || "";
+      if (submarcaInput) submarcaInput.value = data.submarca || "";
+      if (anioInput) anioInput.value = data.anio || "";
+      if (placasInput) placasInput.value = data.placas || "";
+      if (colorInput) colorInput.value = data.color || "";
+
+      urlsEditando.fotoUnidad = data.fotoUnidad || "";
+      urlsEditando.fotoVale = data.fotoVale || "";
+
+      if (btnGuardar) btnGuardar.textContent = "Actualizar";
+    }
+
+    if (coleccion === "entregas") {
+      abrirPantallaOtros("Entregas");
+
+      if (entregaFecha) entregaFecha.value = data.fecha || "";
+      if (entregaSeguro) entregaSeguro.value = data.seguro || "";
+      if (entregaTipoBase) entregaTipoBase.value = data.tipoBase || "";
+      if (entregaSiniestro) entregaSiniestro.value = data.siniestro || "";
+      if (entregaFolio) entregaFolio.value = data.folio || "";
+      if (entregaMarca) entregaMarca.value = data.marca || "";
+      if (entregaSubmarca) entregaSubmarca.value = data.submarca || "";
+      if (entregaAnio) entregaAnio.value = data.anio || "";
+      if (entregaPlacas) entregaPlacas.value = data.placas || "";
+      if (entregaColor) entregaColor.value = data.color || "";
+      if (nombreTaller) nombreTaller.value = data.nombreTaller || "";
+      if (quienRecibe) quienRecibe.value = data.quienRecibe || "";
+
+      urlsEditando.fotoTaller = data.fotoTaller || "";
+
+      if (btnGuardarEntrega) btnGuardarEntrega.textContent = "Actualizar Entrega";
+    }
+
+    if (coleccion === "corralon") {
+      abrirPantallaOtros("Corralón");
+
+      if (corralonFecha) corralonFecha.value = data.fecha || "";
+      if (corralonSeguro) corralonSeguro.value = data.seguro || "";
+      if (corralonSiniestro) corralonSiniestro.value = data.siniestro || "";
+      if (corralonFolio) corralonFolio.value = data.folio || "";
+      if (corralonMarca) corralonMarca.value = data.marca || "";
+      if (corralonSubmarca) corralonSubmarca.value = data.submarca || "";
+      if (corralonAnio) corralonAnio.value = data.anio || "";
+      if (corralonPlacas) corralonPlacas.value = data.placas || "";
+      if (corralonColor) corralonColor.value = data.color || "";
+      if (numeroInventario) numeroInventario.value = data.numeroInventario || "";
+      if (numeroActa) numeroActa.value = data.numeroActa || "";
+      if (motivoDelito) motivoDelito.value = data.motivoDelito || "";
+      if (telefonoClienteCorralon) telefonoClienteCorralon.value = data.telefonoCliente || "";
+
+      urlsEditando.fotoInventario = data.fotoInventario || "";
+      urlsEditando.fotoCarro = data.fotoCarro || "";
+
+      if (btnGuardarCorralon) btnGuardarCorralon.textContent = "Actualizar Corralón";
+    }
+
+    if (coleccion === "sin_seguro") {
+      abrirPantallaOtros("Sin Seguro");
+
+      if (sinSeguroFecha) sinSeguroFecha.value = data.fecha || "";
+      if (sinSeguroMarca) sinSeguroMarca.value = data.marca || "";
+      if (sinSeguroSubmarca) sinSeguroSubmarca.value = data.submarca || "";
+      if (sinSeguroAnio) sinSeguroAnio.value = data.anio || "";
+      if (sinSeguroPlacas) sinSeguroPlacas.value = data.placas || "";
+      if (sinSeguroColor) sinSeguroColor.value = data.color || "";
+      if (sinSeguroNombreCliente) sinSeguroNombreCliente.value = data.nombreCliente || "";
+      if (sinSeguroTelefonoCliente) sinSeguroTelefonoCliente.value = data.telefonoCliente || "";
+      if (sinSeguroMontoCobrado) sinSeguroMontoCobrado.value = data.montoCobrado || 0;
+
+      urlsEditando.sinSeguroFotoUnidad = data.fotoUnidad || "";
+      urlsEditando.sinSeguroFotoServicio = data.fotoServicio || "";
+
+      if (btnGuardarSinSeguro) btnGuardarSinSeguro.textContent = "Actualizar Sin Seguro";
+    }
+
+    if (coleccion === "facturas") {
+      abrirPantallaOtros("Zona de Facturación");
+
+      if (facturaRazonSocial) facturaRazonSocial.value = data.razonSocial || "";
+      if (facturaRFC) facturaRFC.value = data.rfc || "";
+      if (facturaDomicilio) facturaDomicilio.value = data.domicilioFiscal || "";
+      if (facturaCodigoPostal) facturaCodigoPostal.value = data.codigoPostal || "";
+      if (facturaRegimen) facturaRegimen.value = data.regimenFiscal || "";
+      if (facturaCorreo) facturaCorreo.value = data.correoCliente || "";
+      if (facturaMarca) facturaMarca.value = data.marca || "";
+      if (facturaSubmarca) facturaSubmarca.value = data.submarca || "";
+      if (facturaAnio) facturaAnio.value = data.anio || "";
+      if (facturaPlacas) facturaPlacas.value = data.placas || "";
+      if (facturaMontoSinIVA) facturaMontoSinIVA.value = data.montoSinIVA || 0;
+      if (facturaIVA) facturaIVA.value = data.iva || 0;
+      if (facturaTotal) facturaTotal.value = data.totalConIVA || 0;
+
+      urlsEditando.facturaArchivo = data.archivoConstancia || "";
+
+      if (btnGuardarFactura) btnGuardarFactura.textContent = "Actualizar Factura";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error("Error al cargar registro para editar:", error);
+    alert("No se pudo cargar el registro.");
+  }
 }
 
 // -------------------- BUSCAR SOLO VALES --------------------
@@ -1149,17 +1352,7 @@ function renderArchivo(url, alt) {
   const esPdf = lower.includes(".pdf") || lower.includes("/raw/upload/");
 
   if (esPdf) {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>`;
-  }
-
-  function renderArchivo(url, alt) {
-  if (!url) return "Sin archivo";
-
-  const lower = String(url).toLowerCase();
-  const esPdf = lower.includes(".pdf") || lower.includes("/raw/upload/");
-
-  if (esPdf) {
-    return `<a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>`;
+    return <a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>;
   }
 
   return `
@@ -1175,46 +1368,39 @@ function escapeHtml(texto) {
   return div.innerHTML;
 }
 
-let editandoId = null;
-let editandoColeccion = null;
+function togglePassword() {
+  const input = document.getElementById("passwordLogin");
 
-async function editarRegistro(id, coleccion) {
-  try {
-    editandoId = id;
-    editandoColeccion = coleccion;
-
-    const docSnap = await db.collection(coleccion).doc(id).get();
-
-    if (!docSnap.exists) {
-      alert("Registro no encontrado");
-      return;
-    }
-
-    const data = docSnap.data();
-
-    if (coleccion === "vales") {
-      seleccionarPantallaPrincipal(data.tipo);
-
-      if (seguroInput) seguroInput.value = data.seguro || "";
-      if (fechaInput) fechaInput.value = data.fecha || "";
-      if (siniestroInput) siniestroInput.value = data.siniestro || "";
-      if (folioInput) folioInput.value = data.folio || "";
-      if (marcaInput) marcaInput.value = data.marca || "";
-      if (submarcaInput) submarcaInput.value = data.submarca || "";
-      if (anioInput) anioInput.value = data.anio || "";
-      if (placasInput) placasInput.value = data.placas || "";
-      if (colorInput) colorInput.value = data.color || "";
-
-      if (btnGuardar) btnGuardar.textContent = "Actualizar";
-    }
-
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  } catch (error) {
-    console.error(error);
-    alert("Error al editar");
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
   }
-}  
-  
+}
+
+// -------------------- EXPORTAR --------------------
+function exportarExcelFacturas() {
+  let tabla = [
+    [
+      "Fecha",
+      "Razón Social",
+      "RFC",
+      "Domicilio",
+      "Código Postal",
+      "Régimen",
+      "Correo",
+      "Marca",
+      "Submarca",
+      "Año",
+      "Placas",
+      "Monto",
+      "IVA",
+      "Total",
+      "Chofer",
+      "Correo Chofer"
+    ]
+  ];
+
   registrosFacturas.forEach(r => {
     tabla.push([
       r.fecha || "",
@@ -1243,53 +1429,50 @@ async function editarRegistro(id, coleccion) {
   link.href = URL.createObjectURL(blob);
   link.download = "Facturas_ValesGruas.csv";
   link.click();
-  }
-  function exportarFila(btn){
-
-let fila = btn.closest("tr");
-let celdas = fila.querySelectorAll("td");
-
-let datos = [];
-
-celdas.forEach((celda,index)=>{
-if(index < celdas.length -1){
-datos.push(celda.innerText);
 }
-});
 
-let csv = datos.join(",");
+function exportarFila(btn) {
+  let fila = btn.closest("tr");
+  let celdas = fila.querySelectorAll("td");
 
-let blob = new Blob([csv], { type: "text/csv" });
-let url = URL.createObjectURL(blob);
+  let datos = [];
 
-let link = document.createElement("a");
-link.href = url;
-link.download = "Factura_Individual.csv";
-link.click();
+  celdas.forEach((celda, index) => {
+    if (index < celdas.length - 1) {
+      datos.push(celda.innerText);
+    }
+  });
+
+  let csv = datos.join(",");
+
+  let blob = new Blob([csv], { type: "text/csv" });
+  let url = URL.createObjectURL(blob);
+
+  let link = document.createElement("a");
+  link.href = url;
+  link.download = "Factura_Individual.csv";
+  link.click();
 }
-function exportarFactura(btn){
 
-let fila = btn.closest("tr");
-let celdas = fila.querySelectorAll("td");
+function exportarFactura(btn) {
+  let fila = btn.closest("tr");
+  let celdas = fila.querySelectorAll("td");
 
-let datos = [];
+  let datos = [];
 
-celdas.forEach((celda,index)=>{
-if(index < celdas.length -1){
-datos.push(celda.innerText);
-}
-});
+  celdas.forEach((celda, index) => {
+    if (index < celdas.length - 1) {
+      datos.push(celda.innerText);
+    }
+  });
 
-let csv = datos.join(",");
+  let csv = datos.join(",");
 
-let blob = new Blob([csv], { type: "text/csv" });
-let url = URL.createObjectURL(blob);
+  let blob = new Blob([csv], { type: "text/csv" });
+  let url = URL.createObjectURL(blob);
 
-let link = document.createElement("a");
-link.href = url;
-link.download = "Factura.csv";
-link.click();
-
-
-
+  let link = document.createElement("a");
+  link.href = url;
+  link.download = "Factura.csv";
+  link.click();
 }
