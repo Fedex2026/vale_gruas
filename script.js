@@ -410,7 +410,10 @@ async function guardarRegistro() {
         ? await subirImagenACloudinary(fotoValeInput.files[0])
         : "";
 
-    await db.collection("vales").add({
+    if (editandoId) {
+  await db.collection("vales").doc(editandoId).update({
+} else {
+  await db.collection("vales").add({
       fecha: fechaInput.value,
       seguro: seguroInput.value.trim(),
       tipo: tipoSeleccionado,
@@ -428,10 +431,18 @@ async function guardarRegistro() {
       choferCorreo: choferActual.email || "",
       choferNombre: choferActualNombre || choferActual.email || ""
     });
+      }
 
     limpiarFormularioOriginal();
     await cargarValesYAsistencias();
-    alert("Registro guardado correctamente.");
+    if (editandoColeccion === null) {
+  alert("Registro guardado correctamente.");
+} else {
+  alert("Registro actualizado correctamente.");
+}
+    editandoId = null;
+editandoColeccion = null;
+btnGuardar.textContent = "Guardar";
   } catch (error) {
     console.error(error);
     alert("Error al guardar: " + error.message);
@@ -869,7 +880,12 @@ function renderTablaVales(lista) {
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoUnidad, "Foto Unidad")}</td>
       <td>${renderArchivo(r.fotoVale, "Foto Vale")}</td>
-    `;
+      <td>
+      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
+      Editar
+     </button>
+     </td>
+     `;
     tablaBody.appendChild(tr);
   });
 }
@@ -896,7 +912,12 @@ function renderTablaEntregas() {
       <td>${escapeHtml(r.choferNombre)}</td>
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoTaller, "Foto Taller")}</td>
-    `;
+      <td>
+      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
+      Editar
+      </button>
+      </td>
+     `;
     tablaEntregasBody.appendChild(tr);
   });
 }
@@ -925,6 +946,11 @@ function renderTablaCorralon() {
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoInventario, "Foto Inventario")}</td>
       <td>${renderArchivo(r.fotoCarro, "Foto Carro")}</td>
+      <td>
+      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
+      Editar
+      </button>
+      </td>
     `;
     tablaCorralonBody.appendChild(tr);
   });
@@ -950,6 +976,11 @@ function renderTablaSinSeguro() {
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td>${renderArchivo(r.fotoUnidad, "Foto Unidad")}</td>
       <td>${renderArchivo(r.fotoServicio, "Foto Servicio")}</td>
+      <td>
+      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
+      Editar
+      </button>
+      </td>
     `;
     tablaSinSeguroBody.appendChild(tr);
   });
@@ -979,6 +1010,11 @@ function renderTablaFacturas() {
       <td>${escapeHtml(r.choferNombre)}</td>
       <td>${escapeHtml(r.choferCorreo)}</td>
       <td><button class="btnExcelFactura" onclick="exportarFactura(this)">Excel</button></td>
+      <td>
+      <button class="btn-editar" onclick="editarRegistro('${r.id}','vales')">
+      Editar
+      </button>
+      </td>
     `;
     tablaFacturasBody.appendChild(tr);
   });
@@ -1114,6 +1150,49 @@ function escapeHtml(texto) {
   const div = document.createElement("div");
   div.textContent = texto || "";
   return div.innerHTML;
+}
+
+👇 AQUÍ PEGA ↓
+
+let editandoId = null;
+let editandoColeccion = null;
+
+async function editarRegistro(id, coleccion) {
+  try {
+    editandoId = id;
+    editandoColeccion = coleccion;
+
+    const doc = await db.collection(coleccion).doc(id).get();
+
+    if (!doc.exists) {
+      alert("Registro no encontrado");
+      return;
+    }
+
+    const data = doc.data();
+
+    if (coleccion === "vales") {
+      seleccionarPantallaPrincipal(data.tipo);
+
+      seguroInput.value = data.seguro || "";
+      fechaInput.value = data.fecha || "";
+      siniestroInput.value = data.siniestro || "";
+      folioInput.value = data.folio || "";
+      marcaInput.value = data.marca || "";
+      submarcaInput.value = data.submarca || "";
+      anioInput.value = data.anio || "";
+      placasInput.value = data.placas || "";
+      colorInput.value = data.color || "";
+
+      btnGuardar.textContent = "Actualizar";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  } catch (error) {
+    console.error(error);
+    alert("Error al editar");
+  }
 }
 function togglePassword() {
   const input = document.getElementById("passwordLogin");
