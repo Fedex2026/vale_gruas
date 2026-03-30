@@ -1159,10 +1159,10 @@ function renderArchivo(url, alt) {
   const esPdf = lower.includes(".pdf") || lower.includes("/raw/upload/");
 
   if (esPdf) {
-    return <a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>;
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>`;
   }
 
-  return `
+  return 
     <a href="${url}" target="_blank" rel="noopener noreferrer">
       <img src="${url}" alt="${alt}" class="foto-mini" />
     </a>
