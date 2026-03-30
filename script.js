@@ -1152,6 +1152,16 @@ function renderArchivo(url, alt) {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>`;
   }
 
+  function renderArchivo(url, alt) {
+  if (!url) return "Sin archivo";
+
+  const lower = String(url).toLowerCase();
+  const esPdf = lower.includes(".pdf") || lower.includes("/raw/upload/");
+
+  if (esPdf) {
+    return <a href="${url}" target="_blank" rel="noopener noreferrer">Ver PDF</a>;
+  }
+
   return `
     <a href="${url}" target="_blank" rel="noopener noreferrer">
       <img src="${url}" alt="${alt}" class="foto-mini" />
@@ -1173,16 +1183,47 @@ async function editarRegistro(id, coleccion) {
     editandoId = id;
     editandoColeccion = coleccion;
 
-    const doc = await db.collection(coleccion).doc(id).get();
+    const docSnap = await db.collection(coleccion).doc(id).get();
 
-    if (!doc.exists) {
+    if (!docSnap.exists) {
       alert("Registro no encontrado");
       return;
     }
 
-    const data = doc.data();
+    const data = docSnap.data();
 
     if (coleccion === "vales") {
+      seleccionarPantallaPrincipal(data.tipo);
+
+      if (seguroInput) seguroInput.value = data.seguro || "";
+      if (fechaInput) fechaInput.value = data.fecha || "";
+      if (siniestroInput) siniestroInput.value = data.siniestro || "";
+      if (folioInput) folioInput.value = data.folio || "";
+      if (marcaInput) marcaInput.value = data.marca || "";
+      if (submarcaInput) submarcaInput.value = data.submarca || "";
+      if (anioInput) anioInput.value = data.anio || "";
+      if (placasInput) placasInput.value = data.placas || "";
+      if (colorInput) colorInput.value = data.color || "";
+
+      if (btnGuardar) btnGuardar.textContent = "Actualizar";
+    }
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (error) {
+    console.error(error);
+    alert("Error al editar");
+  }
+}
+
+function togglePassword() {
+  const input = document.getElementById("passwordLogin");
+
+  if (input.type === "password") {
+    input.type = "text";
+  } else {
+    input.type = "password";
+  }
+}
       seleccionarPantallaPrincipal(data.tipo);
 
       seguroInput.value = data.seguro || "";
