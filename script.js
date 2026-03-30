@@ -370,8 +370,8 @@ async function subirImagenACloudinary(file) {
 
   const esPdf = file.type === "application/pdf";
   const uploadUrl = esPdf
-    ? https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload
-    : https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload;
+    ? `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/raw/upload`
+    : `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload;`
 
   const formData = new FormData();
   formData.append("file", file);
