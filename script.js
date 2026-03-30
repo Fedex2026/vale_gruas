@@ -1237,15 +1237,16 @@ function togglePassword() {
       colorInput.value = data.color || "";
 
       btnGuardar.textContent = "Actualizar";
-    }
+   
 
-    window.scrollTo({ top: 0, behavior: "smooth" });
+window.scrollTo({ top: 0, behavior: "smooth" });
 
-  } catch (error) {
-    console.error(error);
-    alert("Error al editar");
-  }
+} catch (error) {
+  console.error(error);
+  alert("Error al editar");
 }
+}
+
 function togglePassword() {
   const input = document.getElementById("passwordLogin");
 
