@@ -1224,38 +1224,6 @@ function togglePassword() {
     input.type = "password";
   }
 }
-      seleccionarPantallaPrincipal(data.tipo);
-
-      seguroInput.value = data.seguro || "";
-      fechaInput.value = data.fecha || "";
-      siniestroInput.value = data.siniestro || "";
-      folioInput.value = data.folio || "";
-      marcaInput.value = data.marca || "";
-      submarcaInput.value = data.submarca || "";
-      anioInput.value = data.anio || "";
-      placasInput.value = data.placas || "";
-      colorInput.value = data.color || "";
-
-      btnGuardar.textContent = "Actualizar";
-   
-
-window.scrollTo({ top: 0, behavior: "smooth" });
-
-} catch (error) {
-  console.error(error);
-  alert("Error al editar");
-}
-}
-
-function togglePassword() {
-  const input = document.getElementById("passwordLogin");
-
-  if (input.type === "password") {
-    input.type = "text";
-  } else {
-    input.type = "password";
-  }
-}
 
 function exportarExcelFacturas() {
   let tabla = [
