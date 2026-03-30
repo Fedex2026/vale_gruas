@@ -1165,8 +1165,6 @@ function escapeHtml(texto) {
   return div.innerHTML;
 }
 
-👇 AQUÍ PEGA ↓
-
 let editandoId = null;
 let editandoColeccion = null;
 
