@@ -412,6 +412,19 @@ async function guardarRegistro() {
 
     if (editandoId) {
   await db.collection("vales").doc(editandoId).update({
+    fecha: fechaInput.value,
+  seguro: seguroInput.value.trim(),
+  tipo: tipoSeleccionado,
+  siniestro: siniestroInput ? siniestroInput.value.trim() : "",
+  folio: folioInput ? folioInput.value.trim() : "",
+  marca: marcaInput.value.trim(),
+  submarca: submarcaInput ? submarcaInput.value.trim() : "",
+  anio: anioInput ? anioInput.value.trim() : "",
+  placas: placasInput.value.trim().toUpperCase(),
+  color: colorInput ? colorInput.value.trim() : "",
+  fotoUnidad: fotoUnidadUrl,
+  fotoVale: fotoValeUrl
+});
 } else {
   await db.collection("vales").add({
       fecha: fechaInput.value,
