@@ -232,6 +232,8 @@ h2 {
 .tabla-wrap {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 400px;
   background: white;
   border-radius: 16px;
   border: 1px solid #dbe3ef;
@@ -252,6 +254,9 @@ thead th {
   padding: 14px 16px;
   font-size: 15px;
   white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
 }
 
 tbody td {
@@ -292,89 +297,68 @@ tbody tr:hover {
     min-width: 100%;
   }
 }
+
 .seccion-colapsable summary {
-list-style: none;
-cursor: pointer;
-padding: 0;
-margin: 0 0 8px 0;
-font-size: 28px;
-font-weight: bold;
-color: #1155cc;
-font-family: Arial, Helvetica, sans-serif;
-background: transparent;
-border: none;
+  list-style: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0 0 8px 0;
+  font-size: 28px;
+  font-weight: bold;
+  color: #1155cc;
+  font-family: Arial, Helvetica, sans-serif;
+  background: transparent;
+  border: none;
 }
 
 .seccion-colapsable summary::-webkit-details-marker {
-display: none;
+  display: none;
 }
 
 .seccion-colapsable summary::before {
-content: "▶ ";
-font-size: 18px;
-color: #1155cc;
+  content: "▶️ ";
+  font-size: 18px;
+  color: #1155cc;
 }
 
 .seccion-colapsable[open] summary::before {
-content: "▼ ";
+  content: "▼ ";
 }
 
 .password-wrap {
-position: relative;
+  position: relative;
 }
 
 .password-wrap input {
-width: 100%;
-padding-right: 45px;
+  width: 100%;
+  padding-right: 45px;
 }
 
 .toggle-password {
-position: absolute;
-right: 12px;
-top: 50%;
-transform: translateY(-50%);
-cursor: pointer;
-font-size: 18px;
-color: #666;
-}
-function exportarFactura(btn){
-
-let fila = btn.closest("tr");
-let celdas = fila.querySelectorAll("td");
-
-let datos = [];
-
-celdas.forEach((celda,index)=>{
-if(index < celdas.length -1){
-datos.push(celda.innerText);
-}
-});
-
-let csv = datos.join(",");
-
-let blob = new Blob([csv], { type: "text/csv" });
-let url = URL.createObjectURL(blob);
-
-let link = document.createElement("a");
-link.href = url;
-link.download = "Factura.csv";
-link.click();
-
-}
-  .btnExcelFactura{
-background:#16a34a;
-color:white;
-border:none;
-padding:6px 12px;
-border-radius:6px;
-cursor:pointer;
-font-weight:bold;
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  color: #666;
 }
 
-.btnExcelFactura:hover{
-background:#15803d;
+.btnExcelFactura {
+  background: #16a34a;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
 }
-  .btn-editar {
+
+.btnExcelFactura:hover {
+  background: #15803d;
+}
+
+.btn-editar {
   background: #2563eb;
   color: #fff;
   border: none;
